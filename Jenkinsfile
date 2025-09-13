@@ -10,20 +10,20 @@ pipeline {
 
     stage('Install Dependencies') {
       steps {
-        sh 'npm install --no-audit --no-fund || true'
+        bat 'npm install --no-audit --no-fund || exit /b 0'
       }
     }
 
     stage('Run Tests') {
       steps {
-        sh 'npm test 2>&1 | tee test-output.txt || true'
+        bat 'npm test > test-output.txt 2>&1 || exit /b 0'
         archiveArtifacts artifacts: 'test-output.txt', allowEmptyArchive: true
       }
     }
 
     stage('NPM Audit (Security Scan)') {
       steps {
-        sh 'npm audit --json > npm-audit.json || true'
+        bat 'npm audit --json > npm-audit.json || exit /b 0'
         archiveArtifacts artifacts: 'npm-audit.json', allowEmptyArchive: true
       }
     }
@@ -31,7 +31,7 @@ pipeline {
 
   post {
     always {
-      sh 'tar -czf pipeline-logs.tar.gz test-output.txt npm-audit.json || true'
+      bat 'tar -czf pipeline-logs.tar.gz test-output.txt npm-audit.json || exit /b 0'
       archiveArtifacts artifacts: 'pipeline-logs.tar.gz', allowEmptyArchive: true
     }
   }
