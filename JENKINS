@@ -1,0 +1,38 @@
+pipeline {
+  agent any
+
+  stages {
+    stage('Checkout') {
+      steps {
+        git branch: 'main', url: 'https://github.com/Avsingh4141/8.2CDevSecOps.git'
+      }
+    }
+
+    stage('Install Dependencies') {
+      steps {
+        sh 'npm install --no-audit --no-fund || true'
+      }
+    }
+
+    stage('Run Tests') {
+      steps {
+        sh 'npm test 2>&1 | tee test-output.txt || true'
+        archiveArtifacts artifacts: 'test-output.txt', allowEmptyArchive: true
+      }
+    }
+
+    stage('NPM Audit (Security Scan)') {
+      steps {
+        sh 'npm audit --json > npm-audit.json || true'
+        archiveArtifacts artifacts: 'npm-audit.json', allowEmptyArchive: true
+      }
+    }
+  }
+
+  post {
+    always {
+      sh 'tar -czf pipeline-logs.tar.gz test-output.txt npm-audit.json || true'
+      archiveArtifacts artifacts: 'pipeline-logs.tar.gz', allowEmptyArchive: true
+    }
+  }
+}
