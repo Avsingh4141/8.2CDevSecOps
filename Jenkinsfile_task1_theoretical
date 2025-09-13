@@ -1,0 +1,26 @@
+pipeline {
+  agent any
+  stages {
+    stage('Build') {
+      steps { echo "Build - Tool: npm (Node) or Maven (Java) - task: compile/package" }
+    }
+    stage('Unit & Integration Tests') {
+      steps { echo "Unit & Integration Tests - Tools: Jest/Mocha (unit), Postman/Cypress (integration)" }
+    }
+    stage('Code Analysis') {
+      steps { echo "Code Analysis - Tools: ESLint, SonarCloud" }
+    }
+    stage('Security Scan') {
+      steps { echo "Security Scan - Tools: npm audit, OWASP ZAP, Trivy" }
+    }
+    stage('Deploy to Staging') {
+      steps { echo "Deploy to Staging - Tools: Docker, AWS CLI, Ansible" }
+    }
+    stage('Integration Tests on Staging') {
+      steps { echo "Integration Tests on Staging - Tools: Postman, Selenium" }
+    }
+    stage('Deploy to Production') {
+      steps { echo "Deploy to Production - Tools: Terraform, AWS CLI" }
+    }
+  }
+}
